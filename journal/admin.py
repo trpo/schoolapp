@@ -1,14 +1,14 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import subject, class_of_students, record, user_privileges
+from journal.models import Subject, Record, Student, Teacher, ClassNumber, Evaluation 
 
 """
 class SubjectInline(admin.TabularInline):
-    model = subject
+    model = Subject
     extra = 1
-"""
 
+"""
 
 class SubjectAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -22,10 +22,9 @@ class SubjectAdmin(admin.ModelAdmin):
 
     #inlines = [SubjectInline]
 
-
-
-admin.site.register(subject, SubjectAdmin)
-
-admin.site.register(class_of_students)
-admin.site.register(record)
-admin.site.register(user_privileges)
+admin.site.register(Subject, SubjectAdmin)
+admin.site.register(Record)
+admin.site.register(Student)
+admin.site.register(Teacher)
+admin.site.register(ClassNumber)
+admin.site.register(Evaluation)

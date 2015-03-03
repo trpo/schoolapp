@@ -1,12 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, UserManager
 
 # Create your models here.
+
 SCORE_CHOICES = (
-    ('2', 'Неудовлетворительно'),
-    ('3', 'Удовлетворительно'),
-    ('4', 'Хорошо'),
-    ('5', 'Отлично')
+    ('2', '2'),
+    ('3', '3'),
+    ('4', '4'),
+    ('5', '5')
     )
 
 ATTENDANCE_CHOICES = (
@@ -14,21 +15,6 @@ ATTENDANCE_CHOICES = (
     ('B', 'Болеет'),
     ('N', 'Не был на уроке'),
     ('O', 'Освобожден')
-    )
-
-"""
-CLASS_NUMBER_CHOICES = (
-    ('1A', '1A класс'),
-    ('5A', '5А класс'),
-    ('8A', '8А класс'),
-    ('8B', '8Б класс')
-    )
-"""
-
-LEVEL_CHOICES = (
-    ('STD', 'Ученик'),
-    ('TEA', 'Учитель'),
-    ('DIR', 'Директор')
     )
 
 TEACHER_MANAGER_CHOICES = (
@@ -43,10 +29,22 @@ STUDENT_MANAGER_CHOICES = (
     ('EDU', 'Ученик ответственный за учебный сектор')
     )
 
-class subject(models.Model):
-    name_subject = models.CharField(max_length=100)
-    hours_per_qarter = models.IntegerField(default=18)
+LEVEL_CHOICES = (
+    ('STD', 'Ученик'),
+    ('TEA', 'Учитель'),
+    ('DIR', 'Директор')
+    )
 
+SEX_CHOICES = (
+    ('Men', 'Муж.'),
+    ('Wmn', 'Жен.')
+    )
+
+
+
+class Subject(models.Model):
+    name_subject = models.CharField(max_length=100)
+    hours_per_qarter = models.IntegerField(default=8)
 
     def __str__(self):
         return "{0}".format(self.name_subject)
@@ -55,34 +53,59 @@ class subject(models.Model):
         return "/journal/%i/" % self.id
 
 
-
-class class_of_students(models.Model):
-    class_number = models.CharField(max_length=2, default='1А')
-    student = models.ForeignKey(User, related_name="students_when_teaching_in_class")
+class ClassNumber(models.Model):
+    letter = models.CharField(max_length=3, default='1А')
 
     def __str__(self):
-        return "{0}".format(self.class_number)
+        return "{0}".format(self.letter)
 
-class record(models.Model):
+
+class Student (User):
+    access_level =  models.CharField(max_length=3, default='STD', choices=LEVEL_CHOICES)
+    student_manager = models.CharField(max_length=3, default='STD', choices=STUDENT_MANAGER_CHOICES)
+    sex  = models.CharField(max_length=4, default='Муж.', choices=SEX_CHOICES)
+
+    classnumber = models.ForeignKey(ClassNumber)
+
+    objects = UserManager()
+
+#    def __str__(self):
+#        return "{0}".format(self.name)
+
+class Teacher (User):
+    access_level =  models.CharField(max_length=3, default='TEA', choices=LEVEL_CHOICES)
+    teacher_manager = models.CharField(max_length=3, default='TEA', choices=TEACHER_MANAGER_CHOICES)
+
+    classnumber = models.ForeignKey(ClassNumber)
+
+    objects = UserManager()
+
+#    def __str__(self):
+#        return "{0}".format(self.name)
+
+
+class Record(models.Model):
     date_record = models.DateTimeField('Дата')
+    theme = models.CharField(max_length=300)
+    hometask = models.CharField(max_length=300)
+
+    teacher = models.ForeignKey(Teacher)
+    class_number = models.ForeignKey(ClassNumber)
+    subject = models.ForeignKey(Subject, related_name="subject_of_record")
+
+    def __str__(self):
+        return "{0} {1}".format(self.subject, self.date_record)
+
+
+class Evaluation(models.Model):
     score = models.CharField(max_length=1, default='5', choices=SCORE_CHOICES)
     attendance = models.CharField(max_length=1, default='P', choices=ATTENDANCE_CHOICES)
     comment = models.CharField(max_length=300)
-    students_score = models.ForeignKey(User, related_name="score_for_student_in_record")
-    teachers_record = models.ForeignKey(User, related_name="teacher_who_create_record")
-    subject_record = models.ForeignKey(subject)
+
+    record = models.ForeignKey(Record)
+    student = models.ForeignKey(Student, related_name="score_of_student")
 
     def __str__(self):
-        return "{0} {1} {2}".format(self.students_score, self.date_record, self.subject_record)
-
-class user_privileges(models.Model):
-    access_level =  models.IntegerField(default=0)
-    teacher_manager = models.CharField(max_length=20, default='TEA', choices=TEACHER_MANAGER_CHOICES)
-    student_manager = models.CharField(max_length=20, default='STD', choices=STUDENT_MANAGER_CHOICES)
-    class_of_students =  models.ForeignKey(class_of_students)
-
-
-
-
+        return "{0} оценка {1} урок {2}".format(self.student, self.score, self.record)
 
 

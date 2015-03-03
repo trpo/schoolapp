@@ -6,13 +6,13 @@ from django.views.generic import ListView, DetailView
 
 from django.http import HttpResponse
 
-from journal.models import subject
+from journal.models import Subject
 
 class PostsListView(ListView): # представление в виде списка
-    model = subject    
+    model = Subject    
 
 def index(request):
-    subject_list = subject.objects
+    subject_list = Subject.objects
     
     return HttpResponse(subject_list)
 
