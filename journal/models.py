@@ -97,6 +97,19 @@ class Record(models.Model):
         return "{0} {1}".format(self.subject, self.date_record)
 
 
+class ResultDate(models.Model):
+    school_year  = models.CharField(max_length=100, default='2014-2015')
+    name  = models.CharField(max_length=100, default='1 четверть')
+    date_begin = models.DateTimeField('Дата начала')
+    date_end = models.DateTimeField('Дата окончания')
+
+    classnumber = models.ManyToManyField(ClassNumber)
+
+
+    def __str__(self):
+        return "{0} {1}".format(self.name, self.school_year)
+
+
 class Evaluation(models.Model):
     score = models.CharField(max_length=1, default='5', choices=SCORE_CHOICES)
     attendance = models.CharField(max_length=1, default='P', choices=ATTENDANCE_CHOICES)
@@ -104,6 +117,7 @@ class Evaluation(models.Model):
 
     record = models.ForeignKey(Record)
     student = models.ForeignKey(Student, related_name="score_of_student")
+    resultdate = models.ForeignKey(ResultDate)
 
     def __str__(self):
         return "{0} оценка {1} урок {2}".format(self.student, self.score, self.record)

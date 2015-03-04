@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from journal.models import Subject, Record, Student, Teacher, ClassNumber, Evaluation 
+from journal.models import Subject, Record, Student, Teacher, ClassNumber, Evaluation, ResultDate
 
 """
 class SubjectInline(admin.TabularInline):
@@ -28,3 +28,4 @@ admin.site.register(Student)
 admin.site.register(Teacher)
 admin.site.register(ClassNumber)
 admin.site.register(Evaluation)
+admin.site.register(ResultDate)
