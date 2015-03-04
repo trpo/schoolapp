@@ -42,16 +42,6 @@ SEX_CHOICES = (
 
 
 
-class Subject(models.Model):
-    name_subject = models.CharField(max_length=100)
-    hours_per_qarter = models.IntegerField(default=8)
-
-    def __str__(self):
-        return "{0}".format(self.name_subject)
-
-    def get_absolute_url(self):
-        return "/journal/%i/" % self.id
-
 
 class ClassNumber(models.Model):
     letter = models.CharField(max_length=3, default='1А')
@@ -72,6 +62,7 @@ class Student (User):
 #    def __str__(self):
 #        return "{0}".format(self.name)
 
+
 class Teacher (User):
     access_level =  models.CharField(max_length=3, default='TEA', choices=LEVEL_CHOICES)
     teacher_manager = models.CharField(max_length=3, default='TEA', choices=TEACHER_MANAGER_CHOICES)
@@ -82,6 +73,17 @@ class Teacher (User):
 
 #    def __str__(self):
 #        return "{0}".format(self.name)
+
+
+class Subject(models.Model):
+    name_subject = models.CharField(max_length=100)
+    hours_per_qarter = models.IntegerField(default=8)
+
+    def __str__(self):
+        return "{0}".format(self.name_subject)
+
+    # def get_absolute_url(self):
+    #     return "/journal/%i/" % self.id
 
 
 class Record(models.Model):
